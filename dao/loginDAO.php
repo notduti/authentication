@@ -22,6 +22,7 @@ class LoginDAO extends DAO {
             return $lastId;
         }
         catch(PDOExcepion $e) {
+
             $e->getMessage();
             return -1;
         }
@@ -46,6 +47,7 @@ class LoginDAO extends DAO {
             }
         }
         catch(PDOExcepion $e) {
+
             $e->getMessage();
             return null;
         }
@@ -63,13 +65,16 @@ class LoginDAO extends DAO {
 
             $sql = "SELECT * FROM loginUser WHERE userId = '" . $userId . "';";
             $result = DAO::$connection->query($sql);
-            if($result == false) return null;
+            
             $row = $result->fetch();
+            if(empty($row)) return null;
 
             $user = new User($row["userId"], $row["hashedPassword"],
                 $row["salt"], $row["token"], (int) $row["expire"], (int) $row["validFrom"]);
+            
         }
         catch(PDOExcepion $e) {
+
             $e->getMessage();
             return null;
         }
@@ -87,14 +92,15 @@ class LoginDAO extends DAO {
 
             $sql = "SELECT * FROM loginUser WHERE token = '" . $token . "';";
             $result = DAO::$connection->query($sql);
-            if($result == false) return null;
-            $row = $result->fetch();
-            //if($row == null) return null; //guardare quiii
+
+            $row = $result->fetch(PDO::FETCH_ASSOC);
+            if(empty($row)) return null;
 
             $user = new User($row["userId"], $row["hashedPassword"],
                 $row["salt"], $row["token"], (int) $row["expire"], (int) $row["validFrom"]);
         }
         catch(PDOExcepion $e) {
+
             $e->getMessage();
             return null;
         }

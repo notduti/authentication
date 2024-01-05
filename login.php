@@ -2,40 +2,37 @@
 <?php
 
     include_once "./auth/AuthFunctions.php";
+    include_once "./auth/cookie.php";
     
     if($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if(isset($_POST["btnSubmit"])) {
 
+            $user = null;
+
             $username = $_POST["txtUsername"];
             $password = $_POST["txtPassword"];
-                    
-            $user = LoginDAO::readByUsername($username);
+
+            if((strcmp($username, "") != 0) && (strcmp($password, "") != 0))
+                $user = LoginDAO::readByUsername($username);
+
+
             if($user != null) {
 
                 if(isValid($user, $username, $password)) {
+                    
+                    if(!readCookie()) {
 
-                    $token = createToken($user);
-                    sendToken($token);   //il client avrà un cookie
+                        $token = createToken($user);
+                        sendToken($token); 
+                    }
                     header("Location:index.php");
-
-                    //createToken = creamo il token, lo crittiamo, creamo validfrom e expires (numeri che indicano data e ora)
                 }
                 else invalidUser();
-            }                
+            }
+            else invalidUser();                
         }
-    }/*
-    if($_SERVER["REQUEST_METHOD"] == "GET") {
-                
-        $username = $_GET['user'];
-        $user = LoginDAO::readByUsername($username);
-
-        if($_COOKIE == $user->getToken()) {
-                    
-            echo "<p>aaaa</p>";
-            if($user->getExpire() > time()) header("Location:index.php");
-        }
-    }*/
+    }
 ?>
 
 <html>
