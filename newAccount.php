@@ -7,6 +7,9 @@
         <?php
 
             include_once "./auth/AuthFunctions.php";
+            include_once "./auth/loginModel.php";
+
+            $user = null;
     
             if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -14,10 +17,12 @@
 
                     $username = $_POST['txtNewUsername'];
                     $password = $_POST['txtNewPassword'];
-                    echo("<p>passa</p>");
-                    createUser($username, $password);
-                    
-                    header("Location:login.php");
+
+                    if((strcmp($username, "") != 0) && (strcmp($password, "") != 0))
+                        $user = createUser($username, $password);
+
+                    if($user != null) header("Location:login.php");
+                    else echo("<p style = 'color: red'>Invalid user</p>");
                 }
             }
             

@@ -64,21 +64,28 @@
         return $randomString;
     }
 
-    function createUser(String $username, String $password) : User {
+    function createUser(String $username, String $password) : ?User {
 
-        $user = new User($username, null, null, null, 0, 0);
-        $rc = LoginDAO::insert($user);
+        try {
 
-        $salt = createSalt();
+            $user = new User($username, null, null, null, 0, 0);
+            $rc = LoginDAO::insert($user);
 
-        $crypterdPassword = crypt($password, $salt);
+            $salt = createSalt();
 
-        $user->setSalt($salt);
-        $user->setHashedPassword($crypterdPassword);
+            $crypterdPassword = crypt($password, $salt);
 
-        LoginDAO::update($user);
+            $user->setSalt($salt);
+            $user->setHashedPassword($crypterdPassword);
 
-        return $user;
+            LoginDAO::update($user);
+
+            return $user;
+        }
+        catch(Exception $e) {
+
+            return null;
+        }
     }
 
 ?>
